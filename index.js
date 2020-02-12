@@ -9,7 +9,6 @@ dotenv.config({ path: './config/config.env' })
 const PORT = process.env.PORT || 3001
 
 
-
 connectDB()
 const app = express()
 

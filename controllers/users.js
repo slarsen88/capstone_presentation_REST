@@ -6,7 +6,6 @@ exports.allUsers = (req, res) => {
     User.find({}, (err, users) => {
         res.send(users)
     })
-    // res.json({ msg: 'users route works' })
 }
 
 // @route  GET /api/v1/users/:user
@@ -15,13 +14,13 @@ exports.user = async (req, res) => {
     // Search the DB for a user by sending in the parameter found within the endpoint (/:user)
     const user = await User.findOne({username: req.params.user})
 
-    // If no user is found, the response should send the error in the response
+    // If no user is found, the response should send the error
     if (!user) {
-        return res.status(400).json({ err: 'User not found' })
+        return res.status(404).json({ status: '404', err: 'User not found' })
     }
 
     // If a user is found, send the user as the response
-    res.send(user)
+    res.status(200).send(user)
     console.log(user)
 }
 
@@ -68,3 +67,6 @@ exports.deleteUser = async (req, res) => {
         return res.status(200).json({msg: `${req.params.user} was deleted`})
     })
 }
+
+// @route  PUT /api/v1/users/:user
+// @desc   Update the favorite food of the specified user
