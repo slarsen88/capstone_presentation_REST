@@ -16,7 +16,7 @@ exports.user = async (req, res) => {
 
     // If no user is found, the response should send the error
     if (!user) {
-        return res.status(404).json({ status: '404', err: 'User not found' })
+        return res.status(404).json({ status: 404, err: 'User not found' })
     }
 
     // If a user is found, send the user as the response
@@ -39,7 +39,8 @@ exports.createUser =  async (req, res) => {
         // Create a new user object with information passed in through Postman
         const newUser = new User({
             username: req.body.username,
-            password: req.body.password
+            password: req.body.password,
+            favoriteFood: req.body.favoriteFood
           })
 
           try {
@@ -63,10 +64,32 @@ exports.deleteUser = async (req, res) => {
             // console.log(err.message)
             return res.json(err.message)
         }
-        console.log('deleted successfully')
+        console.log('Deleted successfully')
         return res.status(200).json({msg: `${req.params.user} was deleted`})
     })
 }
 
 // @route  PUT /api/v1/users/:user
 // @desc   Update the favorite food of the specified user
+exports.updateFood = async (req, res) => {
+    // Search the DB for a user by sending in the parameter found within the endpoint (/:user)
+    const user = await User.findOne({username: req.params.user})
+
+    // If no user is found, the response should send the error
+    if (!user) {
+        return res.status(404).json({ err: 'User not found' })
+    }
+
+    // Update user with new favorite food
+    user.favoriteFood = req.body.favoriteFood
+
+    try {
+        // Save the update to the DB
+        const updatedUser = await user.save()
+        console.log(updatedUser)
+        // Send a response that contains the User data from MongoDB
+        res.status(200).send(updatedUser)
+    } catch (err) {
+        console.log(err.message)
+    }
+}
