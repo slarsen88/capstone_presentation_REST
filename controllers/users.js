@@ -59,11 +59,18 @@ exports.createUser =  async (req, res) => {
 // @route  DELETE /api/v1/users/:user
 // @desc   Delete specified user from DB
 exports.deleteUser = async (req, res) => {
-     User.deleteOne({username: req.params.user}, (err) => {
+    // check to see if a user already exists. Do not continue with code until this function completes
+    const user = await User.findOne({ username: req.params.user })
+    if (!user) {
+     return res.status(400).send('Username does not exist')
+    }
+
+    User.deleteOne({username: req.params.user}, (err) => {
         if (err) {
             // console.log(err.message)
             return res.json(err.message)
         }
+
         console.log('Deleted successfully')
         return res.status(200).json({msg: `${req.params.user} was deleted`})
     })
